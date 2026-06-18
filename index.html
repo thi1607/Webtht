@@ -1,194 +1,346 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cửa Hàng THT - Chuyên Thiết Bị Công Nghệ</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-       .navbar-brand { font-weight: 800; color: #1abc9c!important; font-size: 1.5rem; letter-spacing: 1px; }
-        
-        /* Cấu hình khung cảnh báo SSL */
-       .ssl-badge { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 8px; padding: 15px; margin-top: 20px; font-weight: bold; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        
-        /* Cấu hình thẻ sản phẩm */
-       .product-card { transition: transform 0.3s ease, box-shadow 0.3s ease; border: none; border-radius: 12px; overflow: hidden; }
-       .product-card:hover { transform: translateY(-8px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
-       .product-img { height: 220px; object-fit: cover; }
-       .price { color: #e74c3c; font-weight: 700; font-size: 1.3rem; }
-        
-       .footer { background-color: #2c3e50; color: white; padding: 40px 0; margin-top: 50px; }
-    </style>
-</head>
-<body>
+import streamlit as st
+import time
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="#"><i class="fa-solid fa-microchip me-2"></i>THT STORE</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link active" href="#">Trang chủ</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Điện thoại</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Laptop - PC</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Phụ kiện Âm thanh</a></li>
-                </ul>
-                <form class="d-flex me-4">
-                    <input class="form-control me-2" type="search" placeholder="Nhập tên sản phẩm..." aria-label="Search">
-                    <button class="btn btn-outline-info" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-                </form>
-                <div class="d-flex align-items-center">
-                    <a href="#" class="btn btn-success position-relative me-3">
-                        <i class="fa-solid fa-cart-shopping"></i> Giỏ hàng
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            3
-                        </span>
-                    </a>
-                    <a href="#" class="text-light fs-4"><i class="fa-solid fa-circle-user"></i></a>
-                </div>
-            </div>
-        </div>
-    </nav>
+# --- CẤU HÌNH TRANG ---
+st.set_page_config(page_title = "Khám phá Bí mật Grab", page_icon = "🛵", layout = "wide")
 
-    <div class="container">
-        <div class="ssl-badge">
-            <i class="fa-solid fa-shield-halved fa-lg me-2"></i> KHÁCH HÀNG LÀ THƯỢNG ĐẾ !
-        </div>
+# --- DỮ LIỆU CÂU HỎI (Chủ đề Ứng dụng CNTT tại Grab) ---
+QUESTIONS = [
+{
+    "id": 1,
+        "word" : "CHÚC",
+        "question" : "Mô hình ứng dụng tích hợp nhiều dịch vụ (gọi xe, giao thức ăn, thanh toán...) mà Grab đang theo đuổi gọi là gì?",
+        "options" : ["A. Mini App", "B. Super App", "C. Web App", "D. Single App"] ,
+        "answer" : "B. Super App"
+},
+    {
+        "id": 2,
+        "word" : "MỌI",
+        "question" : "Xu hướng quản trị cốt lõi của Grab là Quản trị dựa trên yếu tố nào?",
+        "options" : ["A. Trực giác", "B. Kinh nghiệm", "C. Dữ liệu (Data-Driven)", "D. Cảm xúc"] ,
+        "answer" : "C. Dữ liệu (Data-Driven)"
+    },
+    {
+        "id": 3,
+        "word" : "NGƯỜI",
+        "question" : "Công nghệ cốt lõi nào giúp Grab tự động phân tích và ghép nối tài xế với khách hàng một cách tối ưu?",
+        "options" : ["A. Blockchain", "B. Machine Learning", "C. Thực tế ảo (VR)", "D. In 3D"] ,
+        "answer" : "B. Machine Learning"
+    },
+    {
+        "id": 4,
+        "word" : "MỘT",
+        "question" : "Hệ thống nào được Grab sử dụng chủ yếu để quản lý dữ liệu và chăm sóc khách hàng (CRM/CDP)?",
+        "options" : ["A. Nền tảng dữ liệu khách hàng", "B. Hệ thống kế toán", "C. Phần mềm diệt virus", "D. Mạng nội bộ LAN"] ,
+        "answer" : "A. Nền tảng dữ liệu khách hàng"
+    },
+    {
+        "id": 5,
+        "word" : "NGÀY",
+        "question" : "Giải pháp CNTT nào giúp Grab quản trị rủi ro tài chính và xử lý hàng triệu giao dịch mỗi ngày?",
+        "options" : ["A. Ghi sổ tay", "B. Thanh toán tiền mặt", "C. Ví điện tử & Hệ thống AI", "D. Đếm tiền thủ công"] ,
+        "answer" : "C. Ví điện tử & Hệ thống AI"
+    },
+    {
+        "id": 6,
+        "word" : "TỐT",
+        "question" : "Để dự báo và hoạch định chiến lược kinh doanh chính xác, Grab ứng dụng công nghệ phân tích dữ liệu nào?",
+        "options" : ["A. Small Data", "B. Big Data (Dữ liệu lớn)", "C. No Data", "D. Fake Data"] ,
+        "answer" : "B. Big Data (Dữ liệu lớn)"
+    },
+    {
+        "id": 7,
+        "word" : "LÀNH",
+        "question" : "Một trong những hạn chế/rủi ro lớn nhất của việc quản trị hoàn toàn bằng thuật toán (Algorithmic Management) là gì?",
+        "options" : ["A. Chạy quá nhanh", "B. Tốn giấy mực", "C. Hiện tượng 'Hộp đen thuật toán'", "D. Giao diện xấu"] ,
+        "answer" : "C. Hiện tượng 'Hộp đen thuật toán'"
+    }
+]
 
-        <div class="p-4 p-md-5 mb-4 rounded text-bg-primary mt-4" style="background: linear-gradient(135deg, #1f4037 0%, #99f2c8 100%);">
-            <div class="col-md-8 px-0">
-                <h1 class="display-4 fst-italic fw-bold text-dark">Tuần Lễ Vàng Công Nghệ</h1>
-                <p class="lead my-3 text-dark fw-semibold">Giảm giá lên đến 50% cho các thiết bị Apple, Sony và Logitech. Trải nghiệm mua sắm oline siêu mê</p>
-                <button class="btn btn-dark btn-lg mt-2">Săn Sale Ngay <i class="fa-solid fa-arrow-right ms-2"></i></button>
-            </div>
-        </div>
+TARGET_PHRASE = "CHÚC MỌI NGƯỜI MỘT NGÀY TỐT LÀNH"
 
-        <div class="d-flex justify-content-between align-items-end mb-4 border-bottom pb-2">
-            <h2 class="text-uppercase fw-bold text-secondary mb-0">Sản Phẩm Mới Nhất</h2>
-            <a href="#" class="text-decoration-none">Xem tất cả <i class="fa-solid fa-angle-right"></i></a>
-        </div>
-        
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-            
-            <div class="col">
-                <div class="card h-100 product-card">
-                    <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=600&auto=format&fit=crop" class="card-img-top product-img" alt="MacBook">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">MacBook Pro 14" M3</h5>
-                        <p class="card-text text-muted small">Chip M3 Pro, RAM 18GB, SSD 512GB. Hiệu năng đỉnh cao cho đồ họa chuyên nghiệp.</p>
-                        <p class="price mt-auto mb-3">49.990.000đ</p>
-                        <button class="btn btn-outline-primary w-100"><i class="fa-solid fa-cart-plus me-1"></i> Thêm vào giỏ</button>
-                    </div>
-                </div>
-            </div>
+# --- KHỞI TẠO SESSION STATE (Lưu trạng thái trò chơi) ---
+if 'revealed_words' not in st.session_state:
+st.session_state.revealed_words = [False] * 7
+if 'active_question' not in st.session_state :
+    st.session_state.active_question = None
+    if 'game_won' not in st.session_state :
+        st.session_state.game_won = False
+        if 'answered_correctly' not in st.session_state :
+            st.session_state.answered_correctly = False
+            if 'show_error' not in st.session_state :
+                st.session_state.show_error = False
 
-            <div class="col">
-                <div class="card h-100 product-card">
-                    <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=600&auto=format&fit=crop" class="card-img-top product-img" alt="iPhone">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">iPhone 15 Pro Max</h5>
-                        <p class="card-text text-muted small">Khung Titanium tự nhiên, 256GB, Camera 5x Zoom quang học siêu nét.</p>
-                        <p class="price mt-auto mb-3">33.590.000đ</p>
-                        <button class="btn btn-outline-primary w-100"><i class="fa-solid fa-cart-plus me-1"></i> Thêm vào giỏ</button>
-                    </div>
-                </div>
-            </div>
+# --- HÀM XỬ LÝ SỰ KIỆN ---
+                def open_question(idx) :
+                st.session_state.active_question = idx
+                st.session_state.answered_correctly = False
+                st.session_state.show_error = False
 
-            <div class="col">
-                <div class="card h-100 product-card">
-                    <img src="https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?q=80&w=600&auto=format&fit=crop" class="card-img-top product-img" alt="Headphone">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">Tai nghe Sony WH-1000XM5</h5>
-                        <p class="card-text text-muted small">Chống ồn chủ động ANC dẫn đầu ngành, pin 30 giờ, đệm tai siêu êm.</p>
-                        <p class="price mt-auto mb-3">7.490.000đ</p>
-                        <button class="btn btn-outline-primary w-100"><i class="fa-solid fa-cart-plus me-1"></i> Thêm vào giỏ</button>
-                    </div>
-                </div>
-            </div>
+                def continue_game() :
+                st.session_state.active_question = None
+                st.session_state.answered_correctly = False
+                st.session_state.show_error = False
 
-            <div class="col">
-                <div class="card h-100 product-card">
-                    <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?q=80&w=600&auto=format&fit=crop" class="card-img-top product-img" alt="Keyboard">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">Bàn phím Keychron Q1</h5>
-                        <p class="card-text text-muted small">Khung nhôm CNC nguyên khối, Gasket Mount, hỗ trợ custom phím QMK/VIA.</p>
-                        <p class="price mt-auto mb-3">3.850.000đ</p>
-                        <button class="btn btn-outline-primary w-100"><i class="fa-solid fa-cart-plus me-1"></i> Thêm vào giỏ</button>
-                    </div>
-                </div>
-            </div>
+                def check_answer(q_idx, selected_option, correct_option) :
+                if selected_option == correct_option :
+                    st.session_state.answered_correctly = True
+                    st.session_state.show_error = False
+                    st.session_state.revealed_words[q_idx] = True
+                    # Kiểm tra xem đã mở hết chưa
+                    if all(st.session_state.revealed_words) :
+                        st.session_state.game_won = True
+                    else:
+st.session_state.show_error = True
 
-            <div class="col">
-                <div class="card h-100 product-card">
-                    <img src="https://images.unsplash.com/photo-1527814050087-379381547338?q=80&w=600&auto=format&fit=crop" class="card-img-top product-img" alt="Mouse">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">Logitech MX Master 3S</h5>
-                        <p class="card-text text-muted small">Cảm biến 8K DPI, nút click tĩnh âm (Silent), cuộn MagSpeed siêu tốc.</p>
-                        <p class="price mt-auto mb-3">2.490.000đ</p>
-                        <button class="btn btn-outline-primary w-100"><i class="fa-solid fa-cart-plus me-1"></i> Thêm vào giỏ</button>
-                    </div>
-                </div>
-            </div>
+def reveal_all() :
+    st.session_state.revealed_words = [True] * 7
+    st.session_state.game_won = True
+    st.toast('🏆 Xuất sắc! Mọi bí ẩn đã được giải mã!', icon = '🌟')
 
-            <div class="col">
-                <div class="card h-100 product-card">
-                    <img src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?q=80&w=600&auto=format&fit=crop" class="card-img-top product-img" alt="iPad">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">iPad Pro 11" M2</h5>
-                        <p class="card-text text-muted small">Sức mạnh từ chip M2, màn hình Liquid Retina 120Hz, hỗ trợ Apple Pencil 2.</p>
-                        <p class="price mt-auto mb-3">21.990.000đ</p>
-                        <button class="btn btn-outline-primary w-100"><i class="fa-solid fa-cart-plus me-1"></i> Thêm vào giỏ</button>
-                    </div>
-                </div>
-            </div>
+# --- CSS TÙY CHỈNH (Giao diện đẹp, bo tròn, màu Grab) ---
+    st.markdown("""
+        < style >
+        /* Nền trang web xanh nhạt */
+        .stApp{
+            background - color: #E8F5E9;
+            font - family: 'Segoe UI', Tahoma, Geneva, Verdana, sans - serif;
+        }
 
-            <div class="col">
-                <div class="card h-100 product-card">
-                    <img src="https://images.unsplash.com/photo-1461151304267-38535e780c79?q=80&w=600&auto=format&fit=crop" class="card-img-top product-img" alt="Smartwatch">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">Apple Watch Series 9</h5>
-                        <p class="card-text text-muted small">Màn hình siêu sáng 2000 nits, thao tác chạm hai lần (Double Tap) ma thuật.</p>
-                        <p class="price mt-auto mb-3">9.990.000đ</p>
-                        <button class="btn btn-outline-primary w-100"><i class="fa-solid fa-cart-plus me-1"></i> Thêm vào giỏ</button>
-                    </div>
-                </div>
-            </div>
+        /* Container nền trắng bo tròn */
+        .white - container{
+            background - color: #FFFFFF;
+            border - radius: 20px;
+            padding: 25px;
+            box - shadow: 0 8px 16px rgba(0,177,79,0.1);
+            margin - bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
 
-            <div class="col">
-                <div class="card h-100 product-card">
-                    <img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=600&auto=format&fit=crop" class="card-img-top product-img" alt="Monitor">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">Màn hình Dell UltraSharp 27"</h5>
-                        <p class="card-text text-muted small">Độ phân giải 4K UHD, tấm nền IPS Black, độ bao phủ màu 98% DCI-P3.</p>
-                        <p class="price mt-auto mb-3">13.290.000đ</p>
-                        <button class="btn btn-outline-primary w-100"><i class="fa-solid fa-cart-plus me-1"></i> Thêm vào giỏ</button>
-                    </div>
-                </div>
-            </div>
+        /* Hộp câu hỏi bật lên to giữa màn hình */
+        .question - modal{
+            border: 4px solid #00B14F !important;
+            box - shadow: 0 15px 35px rgba(0,177,79,0.2) !important;
+            padding: 40px !important;
+            animation: popIn 0.4s cubic - bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes popIn{
+            0 % { transform: scale(0.9); opacity : 0; }
+            100 % { transform: scale(1); opacity : 1; }
+        }
 
-        </div>
-    </div>
+        .question - text{
+            font - size: 28px;
+            color: #1a1a1a;
+            text - align: center;
+            line - height: 1.5;
+            margin - top: 20px;
+            margin - bottom: 40px;
+            font - weight: 600;
+        }
 
-    <footer class="footer text-center">
-        <div class="container">
-            <h4 class="mb-3"><i class="fa-solid fa-microchip text-info"></i> Cửa Hàng THT - Đỉnh Cao Công Nghệ</h4>
-            <p>Bài Tập Lớn nhóm 10 demo!!!</p>
-            <div class="fs-4 mb-3">
-                <i class="fa-brands fa-facebook mx-2"></i>
-                <i class="fa-brands fa-youtube mx-2"></i>
-                <i class="fa-brands fa-tiktok mx-2"></i>
-            </div>
-            <p class="text-white-50 small mb-0">&copy; 2026 Bản quyền thuộc về Nhóm 10.</p>
-        </div>
-    </footer>
+        /* Trang trí xe Grab bay lượn */
+        .grab - car{
+            position: absolute;
+            font - size: 40px;
+            opacity: 0.3;
+            animation: drive 15s linear infinite;
+            bottom: 10px;
+        }
+        @keyframes drive{
+            0 % { transform: translateX(-100px); }
+            100 % { transform: translateX(1000px); }
+        }
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+        /* Các ô chữ ẩn/hiện */
+        .word - box{
+            display: flex;
+            justify - content: center;
+            align - items: center;
+            height: 80px;
+            background: linear - gradient(135deg, #00B14F, #009140);
+            color: white;
+            border - radius: 15px;
+            font - size: 24px;
+            font - weight: bold;
+            box - shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .word - hidden{
+            background: #E0E0E0;
+            color: #9E9E9E;
+            font - size: 30px;
+        }
+
+        /* Style cho các nút bấm */
+        div.stButton > button{
+            border - radius: 15px;
+            font - weight: bold;
+            border: 2px solid #00B14F;
+            color: #00B14F;
+            background - color: white;
+            transition: 0.3s;
+            height: 60px; /* Làm nút to hơn */
+            font - size: 18px !important;
+        }
+        div.stButton > button:hover{
+            background - color: #00B14F;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Style riêng cho nút màu xanh lá (Primary) */
+        button[data - baseweb = "button"]:has(div[data - testid = "stMarkdownContainer"]) {
+    /* Bắt lấy các nút được Streamlit mặc định */
+}
+
+/* Tiêu đề */
+.main - title{
+    text - align: center;
+    color: #00B14F;
+    font - size: 40px;
+    font - weight: 900;
+    text - shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    margin - bottom: 30px;
+}
+< / style>
+""", unsafe_allow_html=True)
+
+
+# --- HIỆU ỨNG PHÁO HOA & HOA RƠI KHI THẮNG ---
+if st.session_state.game_won:
+st.balloons() # Hiệu ứng bóng bay / pháo hoa mặc định của Streamlit
+st.markdown("""
+    < style >
+    /* Hiệu ứng hoa rơi */
+    @keyframes fall{
+        0 % { transform: translateY(-10vh) rotate(0deg); opacity : 1;}
+        100 % { transform: translateY(100vh) rotate(360deg); opacity : 0;}
+    }
+    .flower{
+        position: fixed;
+        font - size: 30px;
+        z - index: 9999;
+        top: -10vh;
+        animation: fall linear forwards;
+    }
+    < / style>
+    <script>
+    // Sinh ra những bông hoa và pháo hoa bằng JS
+    const flowers = ['🌸', '🌺', '🌼', '✨', '🛵', '💚'];
+for (let i = 0; i < 50; i++) {
+    let f = document.createElement('div');
+    f.className = 'flower';
+    f.innerText = flowers[Math.floor(Math.random() * flowers.length)];
+    f.style.left = Math.random() * 100 + 'vw';
+    f.style.animationDuration = (Math.random() * 3 + 2) + 's';
+    f.style.animationDelay = Math.random() * 2 + 's';
+    document.body.appendChild(f);
+}
+< / script>
+<div style = "text-align:center; padding: 30px; background-color: #00B14F; color: white; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,177,79,0.5); animation: pulse 2s infinite;">
+<h1 style = "font-size: 50px;">🎉 XUẤT SẮC!🎉< / h1>
+<h2>CHÚC MỌI NGƯỜI MỘT NGÀY TỐT LÀNH< / h2>
+<p>Bạn đã giải mã thành công bí mật quản trị số của Grab!< / p>
+< / div>
+""", unsafe_allow_html=True)
+st.stop()
+
+
+# --- GIAO DIỆN CHÍNH ---
+
+st.markdown('<div class="main-title">🛵 TRÒ CHƠI GIẢI MÃ BÍ MẬT GRAB 💚</div>', unsafe_allow_html = True)
+
+# Khung chứa các ô chữ(Luôn hiển thị)
+st.markdown('<div class="white-container"><div class="grab-car">🛵</div>', unsafe_allow_html = True)
+st.subheader("Bức thông điệp bí ẩn (7 Từ)")
+
+cols = st.columns(7)
+for i, col in enumerate(cols) :
+    with col :
+if st.session_state.revealed_words[i] :
+    st.markdown(f'<div class="word-box">{QUESTIONS[i]["word"]}</div>', unsafe_allow_html = True)
+else :
+    st.markdown(f'<div class="word-box word-hidden">?</div>', unsafe_allow_html = True)
+    st.markdown('</div>', unsafe_allow_html = True)
+
+    st.write("---")
+
+    # KIỂM TRA TRẠNG THÁI : Hiển thị bảng chọn CÂU HỎI hay đang hiển thị 1 CÂU HỎI TO ?
+    if st.session_state.active_question is None :
+# ---------------- BẢNG CHỌN CÂU HỎI ----------------
+col_left, col_right = st.columns([2, 1])
+
+with col_left :
+st.markdown('<div class="white-container">', unsafe_allow_html = True)
+st.subheader("🎯 Chọn câu hỏi để giải mã")
+btn_cols = st.columns(7)
+for i, b_col in enumerate(btn_cols) :
+    with b_col :
+# Nếu chữ đã mở thì hiển thị dấu check, chưa mở thì hiện số
+btn_label = f"Câu {i+1}" if not st.session_state.revealed_words[i] else "✅ Đã mở"
+if st.button(btn_label, key = f"btn_q_{i}", disabled = st.session_state.revealed_words[i]) :
+    open_question(i)
+    st.rerun()
+    st.markdown('</div>', unsafe_allow_html = True)
+
+    with col_right :
+st.markdown('<div class="white-container">', unsafe_allow_html = True)
+st.subheader("🚀 Mở toàn bộ")
+st.write("Nhấn nút dưới đây nếu bạn muốn lật mở tất cả ô chữ!")
+if st.button("Đoán đúng toàn bộ", use_container_width = True) :
+    reveal_all()
+    st.rerun()
+    st.markdown('</div>', unsafe_allow_html = True)
+
+else:
+# ---------------- HIỂN THỊ CÂU HỎI TO GIỮA MÀN HÌNH ----------------
+idx = st.session_state.active_question
+q_data = QUESTIONS[idx]
+
+st.markdown('<div class="white-container question-modal">', unsafe_allow_html = True)
+st.markdown(f"<h2 style='color: #00B14F; text-align: center;'>❓ CÂU HỎI {idx + 1}</h2>", unsafe_allow_html = True)
+st.markdown(f"<div class='question-text'>{q_data['question']}</div>", unsafe_allow_html = True)
+
+# TRẠNG THÁI 1: Trả lời ĐÚNG
+if st.session_state.answered_correctly :
+    st.success("🎉 TUYỆT VỜI! BẠN ĐÃ TRẢ LỜI ĐÚNG. Chữ cái đã được mở!")
+    st.write("---")
+
+    # Nút to để tiếp tục ngay lập tức
+    if st.button("🚀 Tắt câu hỏi & Tiếp tục trò chơi", type = "primary", use_container_width = True) :
+        continue_game()
+        st.rerun()
+
+        # Đợi 3 giây rồi tự động ẩn câu hỏi để tiếp tục trò chơi
+        time.sleep(3)
+        continue_game()
+        st.rerun()
+
+        # TRẠNG THÁI 2: Đang trả lời hoặc trả lời SAI
+    else:
+# Nếu sai thì hiện cảnh báo
+if st.session_state.show_error:
+st.error("❌ Bạn trả lời sai rồi ! Bạn chọn lại đi")
+
+st.write("Vui lòng chọn 1 đáp án chính xác nhất:")
+
+# Bố cục 4 đáp án dạng lưới 2x2 siêu to
+ans_cols = st.columns(2)
+for i, option in enumerate(q_data['options']) :
+    col_idx = i % 2
+    with ans_cols[col_idx] :
+    if st.button(option, key = f"opt_{idx}_{i}", use_container_width = True) :
+        check_answer(idx, option, q_data['answer'])
+        st.rerun()
+
+        st.write("---")
+        col_space, col_close = st.columns([4, 1])
+        with col_close :
+# Nút đóng nếu người chơi chưa muốn trả lời ngay
+if st.button("⬅ Quay lại", key = "close_btn", use_container_width = True) :
+    continue_game()
+    st.rerun()
+
+    st.markdown('</div>', unsafe_allow_html = True)
